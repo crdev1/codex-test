@@ -1,5 +1,14 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useAuth } from './stores/auth.js'
+
+const router = useRouter()
+const { user, isAuthenticated, logout } = useAuth()
+
+const handleLogout = () => {
+  logout()
+  router.push('/')
+}
 </script>
 
 <template>
@@ -10,6 +19,12 @@ import { RouterLink, RouterView } from 'vue-router'
         <div class="nav-links">
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/contact">Contact</RouterLink>
+          <RouterLink v-if="isAuthenticated" to="/dashboard">Dashboard</RouterLink>
+          <span v-if="isAuthenticated" class="user-pill">Hi, {{ user?.name }}</span>
+          <button v-if="isAuthenticated" type="button" class="logout-button" @click="handleLogout">
+            Log out
+          </button>
+          <RouterLink v-else to="/login" class="login-link">Log in</RouterLink>
         </div>
       </nav>
     </header>
@@ -70,6 +85,45 @@ import { RouterLink, RouterView } from 'vue-router'
 .nav-links a.router-link-exact-active {
   background: rgba(255, 255, 255, 0.2);
   color: #fff;
+}
+
+.user-pill {
+  display: none;
+}
+
+.logout-button {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.login-link {
+  font-weight: 600;
+}
+
+@media (min-width: 720px) {
+  .user-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    background: rgba(15, 23, 42, 0.25);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+  }
+
+  .nav-links {
+    gap: 0.75rem;
+  }
 }
 
 .site-content {
