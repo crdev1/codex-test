@@ -132,229 +132,73 @@ const summary = computed(() => [
 </script>
 
 <template>
-  <section class="contact-listing">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">Directory</p>
-        <h1>Contacts</h1>
-        <p class="lede">
-          View every person connected to your accounts. Use this list to understand who is supporting
-          your customers and suppliers at a glance.
+  <section class="grid gap-10">
+    <header class="flex flex-col items-start gap-6 md:flex-row md:items-end md:justify-between">
+      <div class="space-y-3">
+        <p class="text-sm font-semibold uppercase tracking-[0.14em] text-brand-600">Directory</p>
+        <h1 class="text-4xl font-bold text-slate-900 sm:text-5xl">Contacts</h1>
+        <p class="max-w-2xl text-base leading-relaxed text-slate-600">
+          View every person connected to your accounts. Use this list to understand who is supporting your customers and
+          suppliers at a glance.
         </p>
       </div>
-      <button type="button" class="action-button">Add contact</button>
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-700 px-6 py-3 font-semibold text-white shadow-lg shadow-brand-600/40 transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-600/50"
+      >
+        Add contact
+      </button>
     </header>
 
-    <section class="summary-grid" aria-label="Contact overview">
-      <article v-for="item in summary" :key="item.label" class="summary-card">
-        <p class="summary-label">{{ item.label }}</p>
-        <p class="summary-value">{{ item.value }}</p>
-        <p class="summary-helper">{{ item.helper }}</p>
+    <section class="grid gap-4 md:grid-cols-3" aria-label="Contact overview">
+      <article
+        v-for="item in summary"
+        :key="item.label"
+        class="grid gap-1.5 rounded-2xl border border-brand-600/10 bg-gradient-to-br from-brand-600/10 to-brand-600/5 p-6 shadow-soft"
+      >
+        <p class="text-xs font-semibold uppercase tracking-[0.12em] text-brand-700">{{ item.label }}</p>
+        <p class="text-3xl font-bold text-slate-900">{{ item.value }}</p>
+        <p class="text-sm text-slate-600">{{ item.helper }}</p>
       </article>
     </section>
 
     <DataTable :columns="columns" :rows="contacts" row-key="id" empty-message="No contacts yet">
       <template #cell-name="{ row }">
-        <div class="contact-cell">
-          <span class="avatar" aria-hidden="true">{{ row.initials }}</span>
+        <div class="flex items-center gap-3">
+          <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-brand-600/15 to-brand-700/30 font-semibold text-brand-700" aria-hidden="true">
+            {{ row.initials }}
+          </span>
           <div>
-            <p class="contact-name">{{ row.name }}</p>
-            <p class="contact-title">{{ row.title }}</p>
+            <p class="font-semibold text-slate-900">{{ row.name }}</p>
+            <p class="text-sm text-slate-500">{{ row.title }}</p>
           </div>
         </div>
       </template>
 
       <template #cell-email="{ value }">
-        <a class="link" :href="`mailto:${value}`">{{ value }}</a>
+        <a class="font-semibold text-brand-600 hover:underline" :href="`mailto:${value}`">{{ value }}</a>
       </template>
 
       <template #cell-phone="{ value }">
-        <a class="link" :href="`tel:${value}`">{{ value }}</a>
+        <a class="font-semibold text-brand-600 hover:underline" :href="`tel:${value}`">{{ value }}</a>
       </template>
 
       <template #cell-relationship="{ row }">
-        <span class="chip" :class="[`chip--${row.relationship?.type ?? 'other'}`]">
+        <span
+          class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-semibold capitalize"
+          :class="row.relationship?.type === 'customer'
+            ? 'bg-green-100 text-green-700'
+            : row.relationship?.type === 'supplier'
+              ? 'bg-amber-100 text-amber-700'
+              : 'bg-slate-200 text-slate-700'"
+        >
           {{ row.relationship?.name ?? 'Unassigned' }}
         </span>
       </template>
 
       <template #cell-lastActivity="{ value }">
-        <span class="activity">{{ value }}</span>
+        <span class="text-sm text-slate-500">{{ value }}</span>
       </template>
     </DataTable>
   </section>
 </template>
-
-<style scoped>
-.contact-listing {
-  display: grid;
-  gap: 2.5rem;
-}
-
-.page-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  align-items: flex-start;
-}
-
-.eyebrow {
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #2563eb;
-  margin: 0 0 0.25rem;
-  font-weight: 700;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: clamp(2.5rem, 4vw, 3.25rem);
-  color: #0f172a;
-}
-
-.lede {
-  margin: 1rem 0 0;
-  color: #475569;
-  line-height: 1.8;
-  max-width: 48ch;
-}
-
-.action-button {
-  align-self: center;
-  padding: 0.85rem 1.75rem;
-  border-radius: 999px;
-  border: none;
-  font-weight: 600;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
-  box-shadow: 0 18px 30px rgba(37, 99, 235, 0.4);
-  cursor: pointer;
-  transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-.action-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 36px rgba(37, 99, 235, 0.5);
-}
-
-.summary-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-.summary-card {
-  padding: 1.5rem;
-  border-radius: 1.25rem;
-  border: 1px solid rgba(37, 99, 235, 0.08);
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(37, 99, 235, 0.02));
-  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
-  display: grid;
-  gap: 0.35rem;
-}
-
-.summary-label {
-  margin: 0;
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #1d4ed8;
-}
-
-.summary-value {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0f172a;
-}
-
-.summary-helper {
-  margin: 0;
-  color: #475569;
-  font-size: 0.95rem;
-}
-
-.contact-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.avatar {
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(29, 78, 216, 0.25));
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  color: #1d4ed8;
-}
-
-.contact-name {
-  margin: 0;
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.contact-title {
-  margin: 0.15rem 0 0;
-  color: #64748b;
-  font-size: 0.9rem;
-}
-
-.link {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  text-transform: capitalize;
-  background: rgba(148, 163, 184, 0.2);
-  color: #0f172a;
-}
-
-.chip--customer {
-  background: rgba(34, 197, 94, 0.16);
-  color: #166534;
-}
-
-.chip--supplier {
-  background: rgba(251, 191, 36, 0.2);
-  color: #92400e;
-}
-
-.activity {
-  color: #475569;
-  font-size: 0.95rem;
-}
-
-@media (min-width: 720px) {
-  .page-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-
-  .action-button {
-    align-self: flex-end;
-  }
-
-  .summary-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-</style>

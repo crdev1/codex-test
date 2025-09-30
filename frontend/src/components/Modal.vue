@@ -1,26 +1,27 @@
 <template>
   <Teleport to="body">
+    <!-- Teleport keeps the modal above app-level stacking contexts and portals animations correctly -->
     <transition name="modal-fade">
       <div
         v-if="modelValue"
-        class="modal-overlay"
+        class="fixed inset-0 grid place-items-center bg-slate-900/60 backdrop-blur-sm p-6 z-[1000]"
         role="presentation"
         @click="onBackdrop"
       >
         <div
-          class="modal-container"
+          class="relative grid w-full max-w-xl gap-6 rounded-2xl bg-white p-8 shadow-modal sm:p-10"
           role="dialog"
           :aria-modal="true"
           :aria-label="computedAriaLabel"
           @click.stop
         >
-          <header v-if="$slots.header || title" class="modal-header">
+          <header v-if="$slots.header || title" class="flex items-center justify-between gap-4">
             <slot name="header">
-              <h2 class="modal-title">{{ title }}</h2>
+              <h2 class="text-2xl font-semibold text-slate-900">{{ title }}</h2>
             </slot>
             <button
               type="button"
-              class="modal-close"
+              class="inline-flex items-center justify-center rounded-full p-1 text-2xl text-slate-500 transition duration-150 hover:scale-105 hover:text-blue-600"
               aria-label="Close dialog"
               @click="close"
             >
@@ -28,11 +29,11 @@
             </button>
           </header>
 
-          <section class="modal-body">
+          <section class="text-slate-600 leading-relaxed">
             <slot />
           </section>
 
-          <footer v-if="$slots.footer" class="modal-footer">
+          <footer v-if="$slots.footer" class="flex justify-end gap-3">
             <slot name="footer" />
           </footer>
         </div>
@@ -44,6 +45,9 @@
 <script setup>
 import { Teleport, computed, onBeforeUnmount, onMounted, watch } from 'vue'
 
+/**
+ * Accessible modal shell with optional header/footer slots, scroll locking, and keyboard shortcuts.
+ */
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -104,6 +108,7 @@ onBeforeUnmount(() => {
   restoreScroll()
 })
 
+// Keep background from scrolling while the modal is open and restore state on close.
 watch(
   () => props.modelValue,
   (value) => {
@@ -116,82 +121,3 @@ watch(
   }
 )
 </script>
-
-<style scoped>
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 150ms ease;
-}
-
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.58);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  padding: 1.5rem;
-  z-index: 1000;
-}
-
-.modal-container {
-  width: min(560px, 100%);
-  background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 0 32px 64px rgba(15, 23, 42, 0.25);
-  display: grid;
-  gap: 1.25rem;
-  padding: 2rem;
-  position: relative;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #0f172a;
-}
-
-.modal-close {
-  border: none;
-  background: transparent;
-  color: #64748b;
-  font-size: 1.75rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 150ms ease, transform 150ms ease;
-}
-
-.modal-close:hover {
-  color: #1d4ed8;
-  transform: scale(1.05);
-}
-
-.modal-body {
-  color: #475569;
-  line-height: 1.7;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-@media (max-width: 520px) {
-  .modal-container {
-    padding: 1.5rem;
-  }
-}
-</style>

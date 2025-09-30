@@ -1,16 +1,23 @@
 <template>
-  <section class="auth">
-    <header>
-      <h1>Welcome back</h1>
-      <p>Please sign in to access your personalized dashboard.</p>
+  <section class="mx-auto grid max-w-lg gap-8">
+    <header class="space-y-3">
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900">Welcome back</h1>
+      <p class="text-base leading-relaxed text-slate-600">Please sign in to access your personalized dashboard.</p>
     </header>
 
-    <form class="auth-form" @submit.prevent="handleSubmit">
-      <label>
+    <form class="grid gap-5 rounded-2xl bg-white p-8 shadow-2xl shadow-slate-900/5" @submit.prevent="handleSubmit">
+      <label class="grid gap-2 text-sm font-semibold text-slate-700">
         Name
-        <input v-model="form.name" type="text" name="name" autocomplete="name" placeholder="Jane Doe" />
+        <input
+          v-model="form.name"
+          type="text"
+          name="name"
+          autocomplete="name"
+          placeholder="Jane Doe"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+        />
       </label>
-      <label>
+      <label class="grid gap-2 text-sm font-semibold text-slate-700">
         Email
         <input
           v-model="form.email"
@@ -19,9 +26,10 @@
           autocomplete="email"
           required
           placeholder="you@example.com"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
         />
       </label>
-      <label>
+      <label class="grid gap-2 text-sm font-semibold text-slate-700">
         Password
         <input
           v-model="form.password"
@@ -30,14 +38,22 @@
           autocomplete="current-password"
           required
           placeholder="••••••••"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
         />
       </label>
-      <p v-if="error" class="form-error">{{ error }}</p>
-      <button type="submit">Log in</button>
+      <p v-if="error" class="-mt-2 text-sm font-semibold text-red-600">{{ error }}</p>
+      <button
+        type="submit"
+        class="inline-flex items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-700 px-6 py-3 font-semibold text-white shadow-lg shadow-brand-600/40 transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-600/50"
+      >
+        Log in
+      </button>
     </form>
 
-    <p class="footnote">
-      New to Acme Co.? Reach out via the <RouterLink to="/contact">contact page</RouterLink> to get an account.
+    <p class="text-sm text-slate-600">
+      New to Acme Co.? Reach out via the
+      <RouterLink class="font-semibold text-brand-600 hover:underline" to="/contact">contact page</RouterLink>
+      to get an account.
     </p>
   </section>
 </template>
@@ -81,90 +97,3 @@ const handleSubmit = () => {
   }
 }
 </script>
-
-<style scoped>
-.auth {
-  display: grid;
-  gap: 2rem;
-  max-width: 480px;
-  margin: 0 auto;
-}
-
-header h1 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  color: #0f172a;
-}
-
-header p {
-  margin: 0.75rem 0 0;
-  color: #475569;
-  line-height: 1.7;
-}
-
-.auth-form {
-  display: grid;
-  gap: 1.5rem;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 1.25rem;
-  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
-}
-
-label {
-  display: grid;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-input {
-  width: 100%;
-  font: inherit;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  border: 1px solid #cbd5f5;
-  background: #f8fafc;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-}
-
-button {
-  justify-self: start;
-  padding: 0.75rem 1.75rem;
-  border-radius: 999px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
-  transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.45);
-}
-
-.form-error {
-  margin: -0.5rem 0 0;
-  color: #dc2626;
-  font-weight: 600;
-}
-
-.footnote {
-  margin: 0;
-  color: #475569;
-}
-
-.footnote a {
-  color: #2563eb;
-  font-weight: 600;
-}
-</style>

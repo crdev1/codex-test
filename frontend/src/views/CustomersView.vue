@@ -177,118 +177,205 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <section class="customers-page">
-    <header class="page-header">
-      <div class="header-bar">
-        <h1>Customers</h1>
-        <button class="primary" type="button" @click="openModal">New customer</button>
+  <section class="flex flex-col gap-6">
+    <header class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-3xl font-bold text-slate-800">Customers</h1>
+        <button
+          class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-brand-600/40 transition duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-600/60"
+          type="button"
+          @click="openModal"
+        >
+          New customer
+        </button>
       </div>
-      <p class="subtitle">Keep track of everyone you do business with in one place.</p>
+      <p class="max-w-3xl text-sm leading-relaxed text-slate-500">
+        Keep track of everyone you do business with in one place.
+      </p>
     </header>
 
-    <div class="table-card">
-      <div v-if="loading" class="table-state">
-        <span class="loader" aria-hidden="true"></span>
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-soft">
+      <div v-if="loading" class="flex flex-col items-center justify-center gap-4 px-6 py-16 text-slate-500">
+        <span class="h-8 w-8 animate-spin rounded-full border-2 border-brand-600/30 border-t-brand-600" aria-hidden="true"></span>
         <p>Loading customers…</p>
       </div>
 
-      <div v-else-if="fetchError" class="table-state error">
+      <div v-else-if="fetchError" class="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center text-red-600">
         <p>{{ fetchError }}</p>
-        <button type="button" class="secondary" @click="fetchCustomers">Try again</button>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-xl border border-red-200 bg-white px-4 py-2 font-semibold text-red-600 transition duration-150 hover:border-red-300 hover:bg-red-50"
+          @click="fetchCustomers"
+        >
+          Try again
+        </button>
       </div>
 
-      <div v-else-if="!normalizedCustomers.length" class="table-state">
+      <div v-else-if="!normalizedCustomers.length" class="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center text-slate-500">
         <p>No customers yet. Start by adding your first customer.</p>
       </div>
 
-      <div v-else class="table-wrapper">
-        <table class="data-table">
-          <thead>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full min-w-[720px] border-separate border-spacing-0">
+          <thead class="bg-slate-50 text-left">
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Email</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Company</th>
-              <th scope="col">Status</th>
-              <th scope="col">Joined</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Name</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Email</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Phone</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Company</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Status</th>
+              <th class="px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Joined</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="customer in normalizedCustomers" :key="customer.id">
-              <td data-title="Name">{{ customer.name }}</td>
-              <td data-title="Email">{{ customer.email }}</td>
-              <td data-title="Phone">{{ customer.phone }}</td>
-              <td data-title="Company">{{ customer.company }}</td>
-              <td data-title="Status">
-                <span class="status-pill" :data-status="customer.status.toLowerCase()">{{
-                  customer.status
-                }}</span>
+          <tbody class="text-sm text-slate-900">
+            <tr
+              v-for="customer in normalizedCustomers"
+              :key="customer.id"
+              class="border-b border-slate-100 even:bg-slate-50/70 hover:bg-brand-600/10"
+            >
+              <td class="px-5 py-4 align-top">{{ customer.name }}</td>
+              <td class="px-5 py-4 align-top">{{ customer.email }}</td>
+              <td class="px-5 py-4 align-top">{{ customer.phone }}</td>
+              <td class="px-5 py-4 align-top">{{ customer.company }}</td>
+              <td class="px-5 py-4 align-top">
+                <span
+                  class="inline-flex min-w-[7rem] items-center justify-center rounded-full px-3 py-1 text-sm font-semibold capitalize"
+                  :class="customer.status.toLowerCase() === 'inactive'
+                    ? 'bg-slate-200 text-slate-600'
+                    : customer.status.toLowerCase() === 'prospect'
+                      ? 'bg-purple-100 text-purple-700'
+                      : customer.status.toLowerCase() === 'unknown'
+                        ? 'bg-slate-200 text-slate-600'
+                        : 'bg-blue-100 text-blue-700'"
+                >
+                  {{ customer.status }}
+                </span>
               </td>
-              <td data-title="Joined">{{ customer.createdAt }}</td>
+              <td class="px-5 py-4 align-top">{{ customer.createdAt }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <transition name="modal">
+    <transition name="modal-fade">
       <div
         v-if="isModalOpen"
-        class="modal-backdrop"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 px-4 py-10 backdrop-blur-sm"
         role="dialog"
         aria-modal="true"
         @click.self="closeModal"
       >
-        <div class="modal" role="document" tabindex="-1" ref="modalRef" @keydown.esc="closeModal">
-          <header class="modal-header">
-            <h2>New customer</h2>
-            <button type="button" class="icon-button" @click="closeModal" aria-label="Close">
+        <div
+          class="flex w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-modal"
+          role="document"
+          tabindex="-1"
+          ref="modalRef"
+          @keydown.esc="closeModal"
+        >
+          <header class="flex items-center justify-between border-b border-slate-200 px-8 py-6">
+            <h2 class="text-xl font-semibold text-slate-900">New customer</h2>
+            <button
+              type="button"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-full text-2xl text-slate-500 transition duration-150 hover:scale-105 hover:text-blue-600"
+              @click="closeModal"
+              aria-label="Close"
+            >
               ×
             </button>
           </header>
-          <form class="modal-body" @submit.prevent="handleSubmit">
-            <div class="form-row">
-              <label class="form-field">
-                <span>First name</span>
-                <input v-model="customerForm.firstName" type="text" name="firstName" autocomplete="given-name" />
+          <form class="flex flex-col gap-5 px-8 py-6" @submit.prevent="handleSubmit">
+            <div class="flex flex-col gap-5 lg:flex-row">
+              <label class="flex flex-1 flex-col gap-2 text-slate-700">
+                <span class="text-sm font-semibold text-slate-900">First name</span>
+                <input
+                  v-model="customerForm.firstName"
+                  type="text"
+                  name="firstName"
+                  autocomplete="given-name"
+                  class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                />
               </label>
-              <label class="form-field">
-                <span>Last name</span>
-                <input v-model="customerForm.lastName" type="text" name="lastName" autocomplete="family-name" />
+              <label class="flex flex-1 flex-col gap-2 text-slate-700">
+                <span class="text-sm font-semibold text-slate-900">Last name</span>
+                <input
+                  v-model="customerForm.lastName"
+                  type="text"
+                  name="lastName"
+                  autocomplete="family-name"
+                  class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                />
               </label>
             </div>
 
-            <div class="form-row">
-              <label class="form-field">
-                <span>Email</span>
-                <input v-model="customerForm.email" type="email" name="email" autocomplete="email" required />
+            <div class="flex flex-col gap-5 lg:flex-row">
+              <label class="flex flex-1 flex-col gap-2 text-slate-700">
+                <span class="text-sm font-semibold text-slate-900">Email</span>
+                <input
+                  v-model="customerForm.email"
+                  type="email"
+                  name="email"
+                  autocomplete="email"
+                  required
+                  class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                />
               </label>
-              <label class="form-field">
-                <span>Phone</span>
-                <input v-model="customerForm.phone" type="tel" name="phone" autocomplete="tel" />
+              <label class="flex flex-1 flex-col gap-2 text-slate-700">
+                <span class="text-sm font-semibold text-slate-900">Phone</span>
+                <input
+                  v-model="customerForm.phone"
+                  type="tel"
+                  name="phone"
+                  autocomplete="tel"
+                  class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                />
               </label>
             </div>
 
-            <label class="form-field">
-              <span>Company</span>
-              <input v-model="customerForm.company" type="text" name="company" autocomplete="organization" />
+            <label class="flex flex-col gap-2 text-slate-700">
+              <span class="text-sm font-semibold text-slate-900">Company</span>
+              <input
+                v-model="customerForm.company"
+                type="text"
+                name="company"
+                autocomplete="organization"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+              />
             </label>
 
-            <label class="form-field">
-              <span>Status</span>
-              <select v-model="customerForm.status" name="status">
+            <label class="flex flex-col gap-2 text-slate-700">
+              <span class="text-sm font-semibold text-slate-900">Status</span>
+              <select
+                v-model="customerForm.status"
+                name="status"
+                class="rounded-xl border border-slate-200 px-3 py-2.5 text-base shadow-sm transition focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+              >
                 <option v-for="option in statusOptions" :key="option.value" :value="option.value">
                   {{ option.label }}
                 </option>
               </select>
             </label>
 
-            <p v-if="submitError" class="form-error">{{ submitError }}</p>
+            <p v-if="submitError" class="text-sm font-semibold text-red-600">{{ submitError }}</p>
 
-            <footer class="modal-footer">
-              <button type="button" class="secondary" @click="closeModal">Cancel</button>
-              <button type="submit" class="primary" :disabled="submitting">
-                <span v-if="submitting" class="button-spinner" aria-hidden="true"></span>
+            <footer class="flex justify-end gap-3 pt-4">
+              <button
+                type="button"
+                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-600 transition duration-150 hover:border-slate-300 hover:bg-slate-100"
+                @click="closeModal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-brand-600/40 transition duration-150 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-brand-600/60 disabled:cursor-not-allowed disabled:opacity-70"
+                :disabled="submitting"
+              >
+                <span
+                  v-if="submitting"
+                  class="h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-white"
+                  aria-hidden="true"
+                ></span>
                 <span>{{ submitting ? 'Saving…' : 'Save customer' }}</span>
               </button>
             </footer>
@@ -298,336 +385,3 @@ const handleSubmit = async () => {
     </transition>
   </section>
 </template>
-
-<style scoped>
-.customers-page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.page-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.header-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.header-bar h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.subtitle {
-  color: #64748b;
-  max-width: 36rem;
-}
-
-.primary {
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #fff;
-  font-weight: 600;
-  padding: 0.65rem 1.25rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: filter 150ms ease, transform 150ms ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.primary:hover:not(:disabled) {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
-
-.primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.secondary {
-  border: 1px solid #cbd5f5;
-  background: #fff;
-  color: #1e3a8a;
-  font-weight: 600;
-  padding: 0.6rem 1.1rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.secondary:hover {
-  background: #eff6ff;
-}
-
-.table-card {
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
-  overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.15);
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 640px;
-}
-
-.data-table thead {
-  background: #eff6ff;
-  text-align: left;
-}
-
-.data-table th,
-.data-table td {
-  padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 0.95rem;
-}
-
-.data-table tbody tr:nth-child(even) {
-  background: rgba(241, 245, 249, 0.5);
-}
-
-.data-table tbody tr:hover {
-  background: rgba(59, 130, 246, 0.08);
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: capitalize;
-  background: rgba(59, 130, 246, 0.12);
-  color: #1d4ed8;
-}
-
-.status-pill[data-status='inactive'] {
-  background: rgba(148, 163, 184, 0.35);
-  color: #475569;
-}
-
-.status-pill[data-status='prospect'] {
-  background: rgba(147, 51, 234, 0.15);
-  color: #6b21a8;
-}
-
-.status-pill[data-status='unknown'] {
-  background: rgba(148, 163, 184, 0.35);
-  color: #475569;
-}
-
-.table-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1.5rem;
-  gap: 1rem;
-  text-align: center;
-  color: #475569;
-}
-
-.table-state.error {
-  color: #b91c1c;
-}
-
-.loader {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 3px solid rgba(59, 130, 246, 0.3);
-  border-top-color: #2563eb;
-  animation: spin 900ms linear infinite;
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  z-index: 50;
-}
-
-.modal {
-  background: #fff;
-  border-radius: 1rem;
-  width: min(640px, 100%);
-  max-height: min(90vh, 720px);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 40px 60px rgba(15, 23, 42, 0.25);
-  overflow: hidden;
-}
-
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem 1.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.modal-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.icon-button {
-  border: none;
-  background: none;
-  font-size: 1.75rem;
-  line-height: 1;
-  cursor: pointer;
-  color: #334155;
-}
-
-.icon-button:hover {
-  color: #1d4ed8;
-}
-
-.modal-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  padding: 1.75rem;
-  overflow-y: auto;
-}
-
-.form-row {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-@media (min-width: 720px) {
-  .form-row {
-    flex-direction: row;
-  }
-
-  .form-row .form-field {
-    flex: 1;
-  }
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  color: #1f2937;
-}
-
-.form-field span {
-  font-weight: 600;
-  color: #0f172a;
-}
-
-.form-field input,
-.form-field select {
-  border-radius: 0.75rem;
-  border: 1px solid #cbd5f5;
-  padding: 0.65rem 0.85rem;
-  font-size: 1rem;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.form-field input:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
-}
-
-.form-error {
-  color: #b91c1c;
-  font-weight: 600;
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  padding-top: 0.75rem;
-}
-
-.button-spinner {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-top-color: #fff;
-  animation: spin 900ms linear infinite;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 150ms ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 640px) {
-  .data-table {
-    min-width: 100%;
-  }
-
-  .data-table thead {
-    display: none;
-  }
-
-  .data-table tr {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.35rem;
-    padding: 0.85rem 1rem;
-  }
-
-  .data-table td {
-    border: none;
-    padding: 0.35rem 0;
-    font-size: 0.95rem;
-  }
-
-  .data-table td::before {
-    content: attr(data-title);
-    display: block;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #94a3b8;
-    margin-bottom: 0.15rem;
-  }
-}
-</style>

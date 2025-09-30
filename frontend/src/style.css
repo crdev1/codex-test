@@ -1,35 +1,63 @@
-:root {
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
-    "Helvetica Neue", sans-serif;
-  line-height: 1.6;
-  font-weight: 400;
-  color: #0f172a;
-  background-color: #f1f5f9;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+      "Helvetica Neue", sans-serif;
+    color: #0f172a;
+  }
+
+  body {
+    @apply min-h-screen bg-slate-100;
+    background-image: radial-gradient(circle at top left, #e0f2fe, transparent 55%),
+      radial-gradient(circle at bottom right, #e0e7ff, transparent 45%), #f8fafc;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  a:hover {
+    @apply underline;
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+@layer components {
+  .nav-pill {
+    @apply font-semibold text-white/90 px-3 py-1 rounded-full transition-colors duration-150;
+  }
 
-a:hover {
-  text-decoration: underline;
-}
+  .nav-pill:hover {
+    @apply bg-white/20 text-white;
+  }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background: radial-gradient(circle at top left, #e0f2fe, transparent 55%),
-    radial-gradient(circle at bottom right, #e0e7ff, transparent 45%), #f8fafc;
-}
+  .nav-pill.router-link-exact-active {
+    @apply bg-white/20 text-white;
+  }
 
-#app {
-  min-height: 100vh;
-}
+  .modal-fade-enter-active,
+  .modal-fade-leave-active {
+    @apply transition-opacity duration-150;
+  }
 
-* {
-  box-sizing: border-box;
+  .modal-fade-enter-from,
+  .modal-fade-leave-to {
+    @apply opacity-0;
+  }
+
+  .toast-enter-active,
+  .toast-leave-active {
+    @apply transition duration-200 ease-out;
+  }
+
+  .toast-enter-from,
+  .toast-leave-to {
+    @apply opacity-0 translate-y-2;
+  }
+
+  .toast-move {
+    @apply transition-transform duration-200 ease-out;
+  }
 }
