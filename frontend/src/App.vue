@@ -19,6 +19,7 @@ const handleLogout = () => {
         <div class="nav-links">
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/contact">Contact</RouterLink>
+          <RouterLink to="/customers">Customers</RouterLink>
           <RouterLink v-if="isAuthenticated" to="/dashboard">Dashboard</RouterLink>
           <span v-if="isAuthenticated" class="user-pill">Hi, {{ user?.name }}</span>
           <button v-if="isAuthenticated" type="button" class="logout-button" @click="handleLogout">
